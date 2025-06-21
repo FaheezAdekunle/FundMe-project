@@ -7,3 +7,18 @@
 [submodule "lib/foundry-devops"]
 	path = lib/foundry-devops
 	url = https://github.com/ChainAccelOrg/foundry-devops
+[submodule "foundry-smart-contract-lottery-f23/lib/solmate"]
+	path = foundry-smart-contract-lottery-f23/lib/solmate
+	url = https://github.com/transmissions11/solmate
+[submodule "foundry-smart-contract-lottery-f23/lib/chainlink-brownie-contracts"]
+	path = foundry-smart-contract-lottery-f23/lib/chainlink-brownie-contracts
+	url = https://github.com/smartcontractkit/chainlink-brownie-contracts
+[submodule "foundry-smart-contract-lottery-f23/lib/chainlink"]
+	path = foundry-smart-contract-lottery-f23/lib/chainlink
+	url = https://github.com/smartcontractkit/chainlink
+[submodule "foundry-smart-contract-lottery-f23/lib/forge-std"]
+	path = foundry-smart-contract-lottery-f23/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
+[submodule "foundry-smart-contract-lottery-f23/lib/foundry-devops"]
+	path = foundry-smart-contract-lottery-f23/lib/foundry-devops
+	url = https://github.com/Cyfrin/foundry-devops
