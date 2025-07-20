@@ -21,7 +21,7 @@ contract InteractionsTest is Test {
         vm.deal(USER, STARTING_BALANCE);
     }
 
-    function testUserCanFundInteractions() public {
+    function testInteractionsCanFundAndWithdrawFunds() public {
         FundFundMe fundFundMe = new FundFundMe();
         fundFundMe.fundFundMe(address(fundMe));
 
