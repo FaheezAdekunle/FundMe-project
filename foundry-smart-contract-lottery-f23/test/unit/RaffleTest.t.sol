@@ -2,7 +2,7 @@
 
 pragma solidity 0.8.19;
 
-import {Test} from "forge-std/Test.sol";
+import {Test, console} from "forge-std/Test.sol";
 import {DeployRaffle} from "script/DeployRaffle.s.sol";
 import {Raffle} from "src/Raffle.sol";
 import {HelperConfig} from "script/HelperConfig.s.sol";
@@ -279,5 +279,85 @@ contract RaffleTest is CodeConstants, Test {
         assert(recentWinner == expectedWinner);
         assert(winnerBalance == winnerStartingBalance + prize);
         assert(endingTimeStamp > startingTimeStamp);
+    }
+
+    function testEventEmitsWinnerPicked() public raffleEntered skipFork {
+        vm.warp(block.timestamp + interval + 1);
+        vm.roll(block.number + 1);
+
+        vm.recordLogs();
+        raffle.performUpkeep("");
+        Vm.Log[] memory entries = vm.getRecordedLogs();
+        bytes32 requestId = entries[1].topics[1];
+
+        address expectedWinner = raffle.getPlayer(0);
+        vm.expectEmit(true, false, false, false, address(raffle));
+        emit WinnerPicked(expectedWinner);
+
+        uint256[] memory randomWords = new uint256[](1);
+        randomWords[0] = 0;
+
+        VRFCoordinatorV2_5Mock(vrfCoordinator).fulfillRandomWords(
+            uint256(requestId),
+            address(raffle)
+        );
+    }
+
+    /*function testRevertIfTransferToWinnerFails() public raffleEntered skipFork {
+        address currentWinner = raffle.getPlayer(0);
+        console.log("Current winner before manipulation:", currentWinner);
+
+        uint256 playersSlot = 4;
+        bytes32 playersDataSlot = keccak256(abi.encode(playersSlot));
+
+        vm.store(
+            address(raffle),
+            bytes32(uint256(4)),
+            bytes32(uint256(uint160(address(0x1))))
+        );
+
+        vm.recordLogs();
+        raffle.performUpkeep("");
+        Vm.Log[] memory entries = vm.getRecordedLogs();
+        bytes32 requestId = entries[1].topics[1];
+
+        vm.expectRevert(Raffle.Raffle__TransferFailed.selector);
+        VRFCoordinatorV2_5Mock(vrfCoordinator).fulfillRandomWords(
+            uint256(requestId),
+            address(raffle)
+        );
+    }
+    **/
+
+    
+    
+    /*//////////////////////////////////////////////////////////////
+                           GETTERFUNCTIONS
+    //////////////////////////////////////////////////////////////*/
+
+    function testGetEntranceFee() public view {
+        uint256 expectedEntranceFee = raffle.getEntranceFee();
+        assertEq(entranceFee, expectedEntranceFee);
+    }
+
+    function testGetRaffleState() public view {
+        Raffle.RaffleState state = raffle.getRaffleState();
+        assertEq(uint256(state), uint256(Raffle.RaffleState.OPEN));
+    }
+
+    function testGetPlayer() public raffleEntered {
+        address player = raffle.getPlayer(0);
+        assertEq(player, PLAYER);
+    }
+
+    function testGetLastTimeStamp() public view {
+        uint256 s_lastTimeStamp = block.timestamp;
+        uint256 timestamp = raffle.getLastTimeStamp();
+        assertEq(timestamp, s_lastTimeStamp);
+    }
+
+    function testGetRecentWinner() public view {
+        address winner = raffle.getRecentWinner();
+        assertEq(winner, address(0));
     }
 }
